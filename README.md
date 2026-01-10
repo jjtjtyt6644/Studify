@@ -189,9 +189,9 @@ All your data is stored locally on your device using AsyncStorage. Studify does 
 
 ## 👨‍💻 Developer
 
-**Junyu**
+Junyu
 
-Built with ❤️ for students everywhere
+Built for students everywhere
 
 ## 📄 License
 
@@ -210,7 +210,7 @@ If you encounter any issues or have suggestions, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ for productive studying** 📚✨
+**Made for productive studying** 📚✨
 - [ ] Pet assets with animations (Checklist #3)
 - [ ] Gamification with coins and rewards (Checklist #4)
 - [ ] In-app store (Checklist #5)
@@ -232,6 +232,6 @@ If you encounter any issues or have suggestions, please open an issue on GitHub.
 
 ## Development
 
-Built with ❤️ for productive studying
+Built with for productive studying
 
-Version: 1.0.0
+Version: 1.2.0
