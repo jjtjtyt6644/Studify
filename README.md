@@ -2,7 +2,7 @@
 
 Your ultimate study companion for productivity and success! Studify combines the Pomodoro Technique with homework tracking, smart notifications, and a rewarding coin system to help students stay focused and organized.
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Android-green)
 ![React Native](https://img.shields.io/badge/React%20Native-Expo-purple)
 
@@ -234,4 +234,4 @@ If you encounter any issues or have suggestions, please open an issue on GitHub.
 
 Built with for productive studying
 
-Version: 1.2.0
+Version: 1.2.1

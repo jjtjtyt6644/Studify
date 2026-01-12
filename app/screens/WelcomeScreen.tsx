@@ -6,8 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface WelcomeScreenProps {
@@ -64,13 +67,21 @@ export default function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
   ];
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#0f0c29', '#1a1a2e', '#24243e']}
+      style={styles.container}
+    >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Ionicons name="book" size={60} color="#e94560" />
-          </View>
+          <BlurView intensity={20} tint="dark" style={styles.logoBlur}>
+            <LinearGradient
+              colors={['rgba(233, 69, 96, 0.3)', 'rgba(233, 69, 96, 0.15)']}
+              style={styles.logoContainer}
+            >
+              <Ionicons name="book" size={68} color="#e94560" />
+            </LinearGradient>
+          </BlurView>
           <Text style={styles.title}>Welcome to Studify! 📚</Text>
           <Text style={styles.subtitle}>
             Your ultimate study companion for productivity and success
@@ -79,48 +90,69 @@ export default function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
 
         {/* Features */}
         <View style={styles.featuresContainer}>
-          <Text style={styles.sectionTitle}>Features & Tools</Text>
+          <Text style={styles.sectionTitle}>✨ Features & Tools</Text>
           {features.map((feature, index) => (
-            <View key={index} style={styles.featureCard}>
-              <View style={[styles.featureIcon, { backgroundColor: `${feature.color}20` }]}>
-                <Ionicons name={feature.icon as any} size={32} color={feature.color} />
-              </View>
-              <View style={styles.featureInfo}>
-                <Text style={styles.featureTitle}>{feature.title}</Text>
-                <Text style={styles.featureDescription}>{feature.description}</Text>
-              </View>
-            </View>
+            <BlurView key={index} intensity={20} tint="dark" style={styles.featureCard}>
+              <LinearGradient
+                colors={[
+                  `${feature.color}30`,
+                  `${feature.color}15`,
+                ]}
+                style={styles.featureGradient}
+              >
+                <View style={[styles.featureIcon, { backgroundColor: `${feature.color}40` }]}>
+                  <Ionicons name={feature.icon as any} size={36} color={feature.color} />
+                </View>
+                <View style={styles.featureInfo}>
+                  <Text style={styles.featureTitle}>{feature.title}</Text>
+                  <Text style={styles.featureDescription}>{feature.description}</Text>
+                </View>
+              </LinearGradient>
+            </BlurView>
           ))}
         </View>
 
         {/* Credits */}
-        <View style={styles.creditsContainer}>
-          <Text style={styles.creditsTitle}>Created By</Text>
-          <Text style={styles.creditsText}>Junyu</Text>
-          <Text style={styles.creditsSubtext}>
-            Built to help students achieve their goals
-          </Text>
-          <View style={styles.versionContainer}>
-            <Text style={styles.versionText}>Version 1.2.0</Text>
-          </View>
-        </View>
+        <BlurView intensity={20} tint="dark" style={styles.creditsContainer}>
+          <LinearGradient
+            colors={['rgba(233, 69, 96, 0.15)', 'rgba(233, 69, 96, 0.05)']}
+            style={styles.creditsGradient}
+          >
+            <Text style={styles.creditsTitle}>Created By</Text>
+            <Text style={styles.creditsText}>Junyu</Text>
+            <Text style={styles.creditsSubtext}>
+              Built to help students achieve their goals
+            </Text>
+            <View style={styles.versionContainer}>
+              <Text style={styles.versionText}>Version 1.2.0</Text>
+            </View>
+          </LinearGradient>
+        </BlurView>
 
         {/* Get Started Button */}
-        <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
-          <Text style={styles.getStartedText}>Get Started</Text>
-          <Ionicons name="arrow-forward" size={24} color="#fff" />
+        <TouchableOpacity 
+          style={styles.getStartedButton} 
+          onPress={handleGetStarted}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={['#e94560', '#d63251']}
+            style={styles.buttonGradient}
+          >
+            <Text style={styles.getStartedText}>Get Started</Text>
+            <Ionicons name="arrow-forward-circle" size={28} color="#fff" />
+          </LinearGradient>
         </TouchableOpacity>
 
         <View style={styles.spacer} />
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
   },
   scrollContent: {
     padding: 20,
@@ -130,129 +162,154 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 30,
   },
+  logoBlur: {
+    borderRadius: 70,
+    overflow: 'hidden',
+    marginBottom: 24,
+    elevation: 8,
+    shadowColor: '#e94560',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
   logoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#16213e',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
-    borderWidth: 4,
-    borderColor: '#e94560',
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 10,
+    marginBottom: 12,
     textAlign: 'center',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#aaa',
+    fontSize: 17,
+    color: '#bbb',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 26,
     paddingHorizontal: 20,
+    fontWeight: '500',
   },
   featuresContainer: {
     marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
+    letterSpacing: 0.3,
   },
   featureCard: {
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  featureGradient: {
     flexDirection: 'row',
-    backgroundColor: '#16213e',
-    borderRadius: 15,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: '#2a3a5e',
+    padding: 18,
   },
   featureIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 15,
+    marginRight: 16,
   },
   featureInfo: {
     flex: 1,
     justifyContent: 'center',
   },
   featureTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 5,
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
   featureDescription: {
-    fontSize: 14,
-    color: '#aaa',
-    lineHeight: 20,
+    fontSize: 15,
+    color: '#bbb',
+    lineHeight: 22,
   },
   creditsContainer: {
-    alignItems: 'center',
     marginTop: 30,
-    padding: 20,
-    backgroundColor: '#16213e',
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: '#e94560',
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 6,
+  },
+  creditsGradient: {
+    alignItems: 'center',
+    padding: 24,
   },
   creditsTitle: {
-    fontSize: 16,
-    color: '#aaa',
-    marginBottom: 8,
+    fontSize: 17,
+    color: '#bbb',
+    marginBottom: 10,
+    fontWeight: '600',
   },
   creditsText: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 10,
+    marginBottom: 12,
+    letterSpacing: 0.5,
   },
   creditsSubtext: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#aaa',
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: 18,
   },
   versionContainer: {
-    backgroundColor: '#1a1a2e',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
   },
   versionText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: 13,
+    color: '#888',
+    fontWeight: '600',
   },
   getStartedButton: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 30,
+    elevation: 10,
+    shadowColor: '#e94560',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  buttonGradient: {
     flexDirection: 'row',
-    backgroundColor: '#e94560',
-    padding: 18,
-    borderRadius: 15,
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
-    gap: 10,
-    elevation: 8,
-    shadowColor: '#e94560',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
+    gap: 12,
   },
   getStartedText: {
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   spacer: {
-    height: 20,
+    height: 30,
   },
 });

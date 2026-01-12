@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet, Text, Animated } from 'react-native';
+import { View, StyleSheet, Text, Animated, Platform, TouchableOpacity, Modal } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CoinSystem } from './app/utils/CoinSystem';
@@ -18,11 +21,18 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [coins, setCoins] = useState(0);
+  const [showCoinInfo, setShowCoinInfo] = useState(false);
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
 
   useEffect(() => {
     checkFirstLaunch();
     loadCoins();
+    
+    // Hide navigation bar on Android
+    if (Platform.OS === 'android') {
+      NavigationBar.setVisibilityAsync('hidden');
+      NavigationBar.setBehaviorAsync('overlay-swipe');
+    }
     
     // Check for coin updates every 2 seconds
     const interval = setInterval(() => {
@@ -85,7 +95,7 @@ export default function App() {
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
-              let iconName: keyof typeof Ionicons.glyphMap;
+              let iconName: keyof typeof Ionicons.glyphMap = 'home';
 
               if (route.name === 'Pomodoro') {
                 iconName = focused ? 'timer' : 'timer-outline';
@@ -122,20 +132,66 @@ export default function App() {
       </NavigationContainer>
       
       {/* Coin Display */}
-      <View style={styles.coinDisplay} pointerEvents="none">
+      <TouchableOpacity 
+        style={styles.coinDisplay} 
+        onPress={() => setShowCoinInfo(true)}
+        activeOpacity={0.7}
+      >
         <Ionicons name="cash" size={24} color="#FFD700" />
         <Text style={styles.coinText}>{coins}</Text>
-      </View>
-      
-      {/* Floating Cat Animation */}
-      <View style={styles.floatingCat} pointerEvents="none">
-        <LottieView
-          source={require('./assets/animations/cat.json')}
-          autoPlay
-          loop
-          style={styles.lottie}
-        />
-      </View>
+      </TouchableOpacity>
+
+      {/* Coin Info Overlay */}
+      <Modal
+        visible={showCoinInfo}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCoinInfo(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowCoinInfo(false)}
+        >
+          <View style={styles.coinInfoContainer}>
+            <BlurView intensity={90} style={styles.coinInfoBlur}>
+              <LinearGradient
+                colors={['rgba(233, 69, 96, 0.3)', 'rgba(138, 35, 135, 0.3)']}
+                style={styles.coinInfoGradient}
+              >
+                <View style={styles.coinInfoHeader}>
+                  <Ionicons name="information-circle" size={28} color="#FFD700" />
+                  <Text style={styles.coinInfoTitle}>Study Coins</Text>
+                </View>
+                
+                <View style={styles.coinInfoContent}>
+                  <View style={styles.infoSection}>
+                    <Ionicons name="trophy" size={20} color="#4CAF50" />
+                    <Text style={styles.infoText}>Earn coins by:</Text>
+                  </View>
+                  <Text style={styles.bulletText}>• Completing Pomodoro sessions</Text>
+                  <Text style={styles.bulletText}>• Finishing homework tasks</Text>
+                  
+                  <View style={[styles.infoSection, { marginTop: 16 }]}>
+                    <Ionicons name="cart" size={20} color="#2196F3" />
+                    <Text style={styles.infoText}>Use coins in:</Text>
+                  </View>
+                  <Text style={styles.bulletText}>• Shop (Coming Soon! 🚧)</Text>
+                  
+                  <Text style={styles.tipText}>Tip: Keep studying to earn more coins!</Text>
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={() => setShowCoinInfo(false)}
+                >
+                  <Text style={styles.closeButtonText}>Got it!</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -169,16 +225,78 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  floatingCat: {
-    position: 'absolute',
-    right: 5,
-    bottom: 180,
-    width: 220,
-    height: 220,
-    zIndex: 999,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'flex-start',
+    paddingTop: 100,
+    paddingHorizontal: 20,
   },
-  lottie: {
+  coinInfoContainer: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    maxWidth: 400,
+    alignSelf: 'center',
     width: '100%',
-    height: '100%',
+  },
+  coinInfoBlur: {
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  coinInfoGradient: {
+    padding: 24,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
+  },
+  coinInfoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+  },
+  coinInfoTitle: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  coinInfoContent: {
+    marginBottom: 20,
+  },
+  infoSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  infoText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bulletText: {
+    color: '#ddd',
+    fontSize: 14,
+    marginLeft: 28,
+    marginBottom: 4,
+  },
+  tipText: {
+    color: '#FFD700',
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  closeButton: {
+    backgroundColor: '#e94560',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

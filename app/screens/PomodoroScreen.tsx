@@ -7,10 +7,14 @@ import {
   Dimensions,
   Alert,
   Animated,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import LottieView from 'lottie-react-native';
 import { CoinSystem } from '../utils/CoinSystem';
 
 const { width } = Dimensions.get('window');
@@ -416,44 +420,70 @@ export default function PomodoroScreen() {
   const totalMinutes = mode === 'work' ? 25 : 5;
   
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#0f0c29', '#1a1a2e', '#24243e']}
+      style={styles.container}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.modeIndicator}
           onPress={handleModeSwitch}
-          activeOpacity={0.7}
+          activeOpacity={0.8}
         >
-          <Ionicons 
-            name={mode === 'work' ? 'book' : 'cafe'} 
-            size={24} 
-            color="#fff" 
-          />
-          <Text style={styles.modeText}>
-            {mode === 'work' ? 'Focus Mode' : 'Break Time'}
-          </Text>
-          <Ionicons 
-            name="swap-horizontal" 
-            size={20} 
-            color="#aaa" 
-            style={{ marginLeft: 8 }}
-          />
+          <LinearGradient
+            colors={mode === 'work' ? ['#e94560', '#d63251'] : ['#4CAF50', '#45a049']}
+            style={styles.modeGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons 
+              name={mode === 'work' ? 'book' : 'cafe'} 
+              size={24} 
+              color="#fff" 
+            />
+            <Text style={styles.modeText}>
+              {mode === 'work' ? 'Focus Mode' : 'Break Time'}
+            </Text>
+            <Ionicons 
+              name="swap-horizontal" 
+              size={20} 
+              color="rgba(255, 255, 255, 0.7)" 
+              style={{ marginLeft: 8 }}
+            />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
 
-      {/* Timer Circle */}
+      {/* Timer Circle with Gradient Border */}
       <Animated.View 
         style={[
-          styles.timerCircle,
+          styles.timerWrapper,
           { transform: [{ scale: isActive && !isPaused ? pulseAnim : 1 }] }
         ]}
       >
-        <View style={styles.progressRing}>
-          <Text style={styles.timer}>{formatTime(minutes, seconds)}</Text>
-          <Text style={styles.timerLabel}>
-            {isActive && !isPaused ? 'Running' : isPaused ? 'Paused' : 'Ready'}
-          </Text>
-        </View>
+        <LinearGradient
+          colors={mode === 'work' ? ['#e94560', '#ff6b81', '#e94560'] : ['#4CAF50', '#66bb6a', '#4CAF50']}
+          style={styles.timerGradientBorder}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.timerCircle}>
+            <View style={styles.progressRing}>
+              <Text style={styles.timer}>{formatTime(minutes, seconds)}</Text>
+              <View style={styles.timerLabelContainer}>
+                <View style={styles.statusDot} />
+                <Text style={styles.timerLabel}>
+                  {isActive && !isPaused ? 'Running' : isPaused ? 'Paused' : 'Ready'}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
       </Animated.View>
 
       {/* Control Buttons */}
@@ -462,123 +492,213 @@ export default function PomodoroScreen() {
           <TouchableOpacity 
             style={[styles.mainButton, styles.startButton]} 
             onPress={handleStart}
+            activeOpacity={0.9}
           >
-            <Ionicons name="play" size={32} color="#fff" />
+            <LinearGradient
+              colors={['#4CAF50', '#45a049']}
+              style={styles.buttonGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <Ionicons name="play" size={36} color="#fff" />
+            </LinearGradient>
           </TouchableOpacity>
         ) : isPaused ? (
           <>
             <TouchableOpacity 
-              style={[styles.mainButton, styles.resumeButton]} 
+              style={styles.mainButton} 
               onPress={handleResume}
+              activeOpacity={0.9}
             >
-              <Ionicons name="play" size={32} color="#fff" />
+              <LinearGradient
+                colors={['#2196F3', '#1976D2']}
+                style={styles.buttonGradientSmall}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="play" size={28} color="#fff" />
+              </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={[styles.mainButton, styles.resetButton]} 
+              style={styles.mainButton} 
               onPress={handleReset}
+              activeOpacity={0.9}
             >
-              <Ionicons name="refresh" size={32} color="#fff" />
+              <LinearGradient
+                colors={['#9E9E9E', '#757575']}
+                style={styles.buttonGradientSmall}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="refresh" size={28} color="#fff" />
+              </LinearGradient>
             </TouchableOpacity>
           </>
         ) : (
           <>
             <TouchableOpacity 
-              style={[styles.mainButton, styles.pauseButton]} 
+              style={styles.mainButton} 
               onPress={handlePause}
+              activeOpacity={0.9}
             >
-              <Ionicons name="pause" size={32} color="#fff" />
+              <LinearGradient
+                colors={['#FF9800', '#F57C00']}
+                style={styles.buttonGradientSmall}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="pause" size={28} color="#fff" />
+              </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={[styles.mainButton, styles.resetButton]} 
+              style={styles.mainButton} 
               onPress={handleReset}
+              activeOpacity={0.9}
             >
-              <Ionicons name="refresh" size={32} color="#fff" />
+              <LinearGradient
+                colors={['#9E9E9E', '#757575']}
+                style={styles.buttonGradientSmall}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="refresh" size={28} color="#fff" />
+              </LinearGradient>
             </TouchableOpacity>
           </>
         )}
       </View>
 
-      {/* Stats */}
+      {/* Stats with Glass Effect */}
       <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Ionicons name="trophy" size={28} color="#FFD700" />
-          <Text style={styles.statNumber}>{completedSessions}</Text>
-          <Text style={styles.statLabel}>Sessions</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Ionicons name="flame" size={28} color="#e94560" />
-          <Text style={styles.statNumber}>{Math.floor(completedSessions * 25 / 60)}h</Text>
-          <Text style={styles.statLabel}>Focus Time</Text>
-        </View>
+        <BlurView intensity={20} style={styles.statCard} tint="dark">
+          <LinearGradient
+            colors={['rgba(255, 215, 0, 0.1)', 'rgba(255, 215, 0, 0.05)']}
+            style={styles.statGradient}
+          >
+            <View style={styles.statIconContainer}>
+              <Ionicons name="trophy" size={32} color="#FFD700" />
+            </View>
+            <Text style={styles.statNumber}>{completedSessions}</Text>
+            <Text style={styles.statLabel}>Sessions</Text>
+          </LinearGradient>
+        </BlurView>
+        
+        <BlurView intensity={20} style={styles.statCard} tint="dark">
+          <LinearGradient
+            colors={['rgba(233, 69, 96, 0.1)', 'rgba(233, 69, 96, 0.05)']}
+            style={styles.statGradient}
+          >
+            <View style={styles.statIconContainer}>
+              <Ionicons name="flame" size={32} color="#e94560" />
+            </View>
+            <Text style={styles.statNumber}>{Math.floor(completedSessions * 25 / 60)}h</Text>
+            <Text style={styles.statLabel}>Focus Time</Text>
+          </LinearGradient>
+        </BlurView>
       </View>
-    </View>
+      </ScrollView>
+      
+      {/* Floating Cat Animation */}
+      <View style={styles.floatingCat} pointerEvents="none">
+        <LottieView
+          source={require('../../assets/animations/cat.json')}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+  },
+  scrollContent: {
     alignItems: 'center',
     paddingTop: 60,
+    paddingBottom: 40,
   },
   header: {
     marginBottom: 40,
   },
   modeIndicator: {
+    borderRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#e94560',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modeGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#16213e',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 25,
-    borderWidth: 2,
-    borderColor: '#e94560',
-    shadowColor: '#e94560',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
+    paddingHorizontal: 28,
+    paddingVertical: 14,
   },
   modeText: {
     fontSize: 18,
     color: '#fff',
     fontWeight: '700',
+    letterSpacing: 0.5,
   },
-  timerCircle: {
-    width: width * 0.75,
-    height: width * 0.75,
-    borderRadius: width * 0.375,
-    backgroundColor: '#16213e',
-    alignItems: 'center',
-    justifyContent: 'center',
+  timerWrapper: {
     marginVertical: 40,
-    borderWidth: 8,
-    borderColor: '#e94560',
+  },
+  timerGradientBorder: {
+    width: width * 0.78,
+    height: width * 0.78,
+    borderRadius: width * 0.39,
+    padding: 4,
     shadowColor: '#e94560',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOpacity: 0.6,
+    shadowRadius: 25,
+    elevation: 12,
+  },
+  timerCircle: {
+    width: '100%',
+    height: '100%',
+    borderRadius: width * 0.375,
+    backgroundColor: 'rgba(22, 33, 62, 0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   progressRing: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   timer: {
-    fontSize: 64,
+    fontSize: 68,
     fontWeight: 'bold',
     color: '#fff',
     fontFamily: 'monospace',
-    letterSpacing: 4,
+    letterSpacing: 6,
+    textShadowColor: 'rgba(233, 69, 96, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  timerLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#4CAF50',
   },
   timerLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#aaa',
-    marginTop: 8,
     textTransform: 'uppercase',
-    letterSpacing: 2,
+    letterSpacing: 3,
+    fontWeight: '600',
   },
   controlsContainer: {
     flexDirection: 'row',
@@ -586,57 +706,84 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   mainButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    borderRadius: 40,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  buttonGradient: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+  },
+  buttonGradientSmall: {
+    width: 75,
+    height: 75,
+    borderRadius: 37.5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   startButton: {
-    backgroundColor: '#4CAF50',
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-  },
-  pauseButton: {
-    backgroundColor: '#FF9800',
-  },
-  resumeButton: {
-    backgroundColor: '#2196F3',
-  },
-  resetButton: {
-    backgroundColor: '#666',
+    transform: [{ scale: 1 }],
   },
   statsRow: {
     flexDirection: 'row',
     gap: 20,
-    marginTop: 40,
+    marginTop: 50,
     paddingHorizontal: 20,
   },
   statCard: {
-    backgroundColor: '#16213e',
-    padding: 20,
-    borderRadius: 15,
-    alignItems: 'center',
     flex: 1,
-    borderWidth: 2,
-    borderColor: '#2a3a5e',
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  statGradient: {
+    padding: 24,
+    alignItems: 'center',
+  },
+  statIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
   },
   statNumber: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#fff',
     marginTop: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#aaa',
-    marginTop: 4,
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.6)',
+    marginTop: 6,
     textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    fontWeight: '600',
+  },
+  floatingCat: {
+    position: 'absolute',
+    right: -30,
+    bottom: 180,
+    width: 220,
+    height: 220,
+    zIndex: 999,
+  },
+  lottie: {
+    width: '100%',
+    height: '100%',
   },
 });

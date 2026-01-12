@@ -9,8 +9,11 @@ import {
   Alert,
   Modal,
   AppState,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CoinSystem } from '../utils/CoinSystem';
 
@@ -20,6 +23,7 @@ export default function SettingsScreen() {
   const [longBreakTime, setLongBreakTime] = useState('15');
   const [completedSessions, setCompletedSessions] = useState(0);
   const [showAppInfo, setShowAppInfo] = useState(false);
+  const [showBuildLog, setShowBuildLog] = useState(false);
   
   // Statistics
   const [totalStudyTime, setTotalStudyTime] = useState(0); // in minutes
@@ -284,225 +288,567 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Customize your Studify experience</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Timer Settings</Text>
-        
-        <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Work Duration (minutes)</Text>
-          <TextInput
-            style={styles.input}
-            value={workTime}
-            onChangeText={setWorkTime}
-            keyboardType="numeric"
-            maxLength={3}
-            placeholderTextColor="#666"
-          />
+    <LinearGradient
+      colors={['#0f0c29', '#1a1a2e', '#24243e']}
+      style={styles.container}
+    >
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.title}>Settings</Text>
+          <LinearGradient
+            colors={['rgba(233, 69, 96, 0.2)', 'rgba(233, 69, 96, 0.1)']}
+            style={styles.subtitleContainer}
+          >
+            <Text style={styles.subtitle}>Customize your Studify experience</Text>
+          </LinearGradient>
         </View>
 
-        <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Short Break (minutes)</Text>
-          <TextInput
-            style={styles.input}
-            value={breakTime}
-            onChangeText={setBreakTime}
-            keyboardType="numeric"
-            maxLength={2}
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Long Break (minutes)</Text>
-          <TextInput
-            style={styles.input}
-            value={longBreakTime}
-            onChangeText={setLongBreakTime}
-            keyboardType="numeric"
-            maxLength={2}
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <TouchableOpacity style={styles.saveButton} onPress={saveSettings}>
-          <Text style={styles.buttonText}>Save Settings</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>📊 Statistics</Text>
-        
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Ionicons name="timer" size={32} color="#4CAF50" />
-            <Text style={styles.statNumber}>{completedSessions}</Text>
-            <Text style={styles.statLabel}>Sessions</Text>
-          </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Timer Settings</Text>
           
-          <View style={styles.statCard}>
-            <Ionicons name="flame" size={32} color="#FF9800" />
-            <Text style={styles.statNumber}>{currentStreak}</Text>
-            <Text style={styles.statLabel}>Day Streak</Text>
-          </View>
-          
-          <View style={styles.statCard}>
-            <Ionicons name="cash" size={32} color="#FFD700" />
-            <Text style={styles.statNumber}>{totalCoins}</Text>
-            <Text style={styles.statLabel}>Total Coins</Text>
-          </View>
-          
-          <View style={styles.statCard}>
-            <Ionicons name="time" size={32} color="#2196F3" />
-            <Text style={styles.statNumber}>{formatTime(totalStudyTime)}</Text>
-            <Text style={styles.statLabel}>Study Time</Text>
-          </View>
-          
-          <View style={styles.statCard}>
-            <Ionicons name="cafe" size={32} color="#9C27B0" />
-            <Text style={styles.statNumber}>{formatTime(totalBreakTime)}</Text>
-            <Text style={styles.statLabel}>Break Time</Text>
-          </View>
-          
-          <View style={[styles.statCard, styles.highlightCard]}>
-            <Ionicons name="phone-portrait" size={32} color="#e94560" />
-            <Text style={styles.statNumber}>{formatSeconds(todayTime)}</Text>
-            <Text style={styles.statLabel}>Today's Time</Text>
-          </View>
-        </View>
-      </View>
+          <BlurView intensity={20} tint="dark" style={styles.settingsCard}>
+            <LinearGradient
+              colors={['rgba(233, 69, 96, 0.1)', 'rgba(233, 69, 96, 0.05)']}
+              style={styles.cardGradient}
+            >
+              <View style={styles.settingItem}>
+                <View style={styles.settingLabelContainer}>
+                  <Ionicons name="briefcase" size={22} color="#e94560" />
+                  <Text style={styles.settingLabel}>Work Duration</Text>
+                </View>
+                <BlurView intensity={15} tint="dark" style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={workTime}
+                    onChangeText={setWorkTime}
+                    keyboardType="numeric"
+                    maxLength={3}
+                    placeholderTextColor="#666"
+                  />
+                  <Text style={styles.inputUnit}>min</Text>
+                </BlurView>
+              </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>App Info</Text>
-        
-        <TouchableOpacity 
-          style={styles.appInfoButton} 
-          onPress={() => setShowAppInfo(true)}
-          activeOpacity={0.7}
-        >
-          <View style={styles.appInfoButtonContent}>
-            <Ionicons name="information-circle" size={24} color="#e94560" />
-            <View style={styles.appInfoButtonText}>
-              <Text style={styles.appInfoTitle}>About Studify</Text>
-              <Text style={styles.appInfoSubtitle}>Tap to view app details</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#666" />
-          </View>
-        </TouchableOpacity>
-      </View>
+              <View style={styles.settingItem}>
+                <View style={styles.settingLabelContainer}>
+                  <Ionicons name="cafe" size={22} color="#4CAF50" />
+                  <Text style={styles.settingLabel}>Short Break</Text>
+                </View>
+                <BlurView intensity={15} tint="dark" style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={breakTime}
+                    onChangeText={setBreakTime}
+                    keyboardType="numeric"
+                    maxLength={2}
+                    placeholderTextColor="#666"
+                  />
+                  <Text style={styles.inputUnit}>min</Text>
+                </BlurView>
+              </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Advanced</Text>
-        
-        <TouchableOpacity style={styles.resetButton} onPress={resetSettings}>
-          <Text style={styles.buttonText}>Reset to Default</Text>
-        </TouchableOpacity>
+              <View style={styles.settingItem}>
+                <View style={styles.settingLabelContainer}>
+                  <Ionicons name="time" size={22} color="#2196F3" />
+                  <Text style={styles.settingLabel}>Long Break</Text>
+                </View>
+                <BlurView intensity={15} tint="dark" style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={longBreakTime}
+                    onChangeText={setLongBreakTime}
+                    keyboardType="numeric"
+                    maxLength={2}
+                    placeholderTextColor="#666"
+                  />
+                  <Text style={styles.inputUnit}>min</Text>
+                </BlurView>
+              </View>
 
-        <TouchableOpacity style={styles.dangerButton} onPress={clearAllData}>
-          <Text style={styles.buttonText}>Clear All Data</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2026 Studify</Text>
-        <Text style={styles.footerText}>Made by Junyu</Text>
-      </View>
-
-      {/* App Info Modal */}
-      <Modal
-        visible={showAppInfo}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowAppInfo(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>About Studify</Text>
-              <TouchableOpacity onPress={() => setShowAppInfo(false)}>
-                <Ionicons name="close" size={28} color="#fff" />
+              <TouchableOpacity 
+                style={styles.saveButton} 
+                onPress={saveSettings}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#4CAF50', '#45a049']}
+                  style={styles.saveGradient}
+                >
+                  <Ionicons name="checkmark-circle" size={24} color="#fff" />
+                  <Text style={styles.buttonText}>Save Settings</Text>
+                </LinearGradient>
               </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.modalBody}>
-              <View style={styles.logoSection}>
-                <Ionicons name="book" size={60} color="#e94560" />
-                <Text style={styles.appName}>Studify</Text>
-                <Text style={styles.appTagline}>Your Ultimate Study Companion</Text>
-              </View>
-
-              <View style={styles.infoCard}>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Version</Text>
-                  <Text style={styles.infoValue}>1.2.0</Text>
-                </View>
-                
-                <View style={styles.infoDivider} />
-                
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Developer</Text>
-                  <Text style={styles.infoValue}>Junyu</Text>
-                </View>
-                
-                <View style={styles.infoDivider} />
-                
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Built with</Text>
-                  <Text style={styles.infoValue}>React Native & Expo</Text>
-                </View>
-                
-                <View style={styles.infoDivider} />
-                
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Purpose</Text>
-                  <Text style={styles.infoValue}>Productive Studying</Text>
-                </View>
-              </View>
-
-              <View style={styles.featuresSection}>
-                <Text style={styles.featuresSectionTitle}>Features</Text>
-                <View style={styles.featureItem}>
-                  <Ionicons name="timer" size={20} color="#4CAF50" />
-                  <Text style={styles.featureText}>Pomodoro Timer</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons name="book" size={20} color="#2196F3" />
-                  <Text style={styles.featureText}>Homework Tracker</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons name="notifications" size={20} color="#FF9800" />
-                  <Text style={styles.featureText}>Smart Notifications</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons name="cash" size={20} color="#FFD700" />
-                  <Text style={styles.featureText}>Coin Rewards System</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons name="paw" size={20} color="#9C27B0" />
-                  <Text style={styles.featureText}>Study Companion</Text>
-                </View>
-              </View>
-
-              <View style={styles.modalFooter}>
-                <Text style={styles.modalFooterText}>© 2026 Studify</Text>
-                <Text style={styles.modalFooterText}>Made by Junyu</Text>
-              </View>
-            </ScrollView>
-          </View>
+            </LinearGradient>
+          </BlurView>
         </View>
-      </Modal>
-    </ScrollView>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Statistics</Text>
+          
+          <View style={styles.statsGrid}>
+            <BlurView intensity={20} tint="dark" style={styles.statCard}>
+              <LinearGradient
+                colors={['rgba(76, 175, 80, 0.2)', 'rgba(76, 175, 80, 0.1)']}
+                style={styles.statGradient}
+              >
+                <Ionicons name="timer" size={36} color="#4CAF50" />
+                <Text style={styles.statNumber}>{completedSessions}</Text>
+                <Text style={styles.statLabel}>Sessions</Text>
+              </LinearGradient>
+            </BlurView>
+            
+            <BlurView intensity={20} tint="dark" style={styles.statCard}>
+              <LinearGradient
+                colors={['rgba(255, 152, 0, 0.2)', 'rgba(255, 152, 0, 0.1)']}
+                style={styles.statGradient}
+              >
+                <Ionicons name="flame" size={36} color="#FF9800" />
+                <Text style={styles.statNumber}>{currentStreak}</Text>
+                <Text style={styles.statLabel}>Day Streak</Text>
+              </LinearGradient>
+            </BlurView>
+            
+            <BlurView intensity={20} tint="dark" style={styles.statCard}>
+              <LinearGradient
+                colors={['rgba(255, 215, 0, 0.2)', 'rgba(255, 215, 0, 0.1)']}
+                style={styles.statGradient}
+              >
+                <Ionicons name="cash" size={36} color="#FFD700" />
+                <Text style={styles.statNumber}>{totalCoins}</Text>
+                <Text style={styles.statLabel}>Total Coins</Text>
+              </LinearGradient>
+            </BlurView>
+            
+            <BlurView intensity={20} tint="dark" style={styles.statCard}>
+              <LinearGradient
+                colors={['rgba(33, 150, 243, 0.2)', 'rgba(33, 150, 243, 0.1)']}
+                style={styles.statGradient}
+              >
+                <Ionicons name="time" size={36} color="#2196F3" />
+                <Text style={styles.statNumber}>{formatTime(totalStudyTime)}</Text>
+                <Text style={styles.statLabel}>Study Time</Text>
+              </LinearGradient>
+            </BlurView>
+            
+            <BlurView intensity={20} tint="dark" style={styles.statCard}>
+              <LinearGradient
+                colors={['rgba(156, 39, 176, 0.2)', 'rgba(156, 39, 176, 0.1)']}
+                style={styles.statGradient}
+              >
+                <Ionicons name="cafe" size={36} color="#9C27B0" />
+                <Text style={styles.statNumber}>{formatTime(totalBreakTime)}</Text>
+                <Text style={styles.statLabel}>Break Time</Text>
+              </LinearGradient>
+            </BlurView>
+          
+          <BlurView intensity={20} tint="dark" style={[styles.statCard, styles.highlightCard]}>
+            <LinearGradient
+              colors={['rgba(233, 69, 96, 0.25)', 'rgba(233, 69, 96, 0.15)']}
+              style={styles.statGradient}
+            >
+              <Ionicons name="phone-portrait" size={36} color="#e94560" />
+              <Text style={styles.statNumber}>{formatSeconds(todayTime)}</Text>
+              <Text style={styles.statLabel}>Today's Time</Text>
+            </LinearGradient>
+          </BlurView>
+        </View>
+      </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ℹ️ App Info</Text>
+          
+          <TouchableOpacity 
+            style={styles.appInfoButton} 
+            onPress={() => setShowAppInfo(true)}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={20} tint="dark" style={styles.appInfoBlur}>
+              <LinearGradient
+                colors={['rgba(233, 69, 96, 0.15)', 'rgba(233, 69, 96, 0.05)']}
+                style={styles.appInfoGradient}
+              >
+                <Ionicons name="information-circle" size={28} color="#e94560" />
+                <View style={styles.appInfoButtonText}>
+                  <Text style={styles.appInfoTitle}>About Studify</Text>
+                  <Text style={styles.appInfoSubtitle}>Tap to view app details</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#888" />
+              </LinearGradient>
+            </BlurView>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.appInfoButton, { marginTop: 12 }]} 
+            onPress={() => setShowBuildLog(true)}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={20} tint="dark" style={styles.appInfoBlur}>
+              <LinearGradient
+                colors={['rgba(33, 150, 243, 0.15)', 'rgba(33, 150, 243, 0.05)']}
+                style={styles.appInfoGradient}
+              >
+                <Ionicons name="construct" size={28} color="#2196F3" />
+                <View style={styles.appInfoButtonText}>
+                  <Text style={styles.appInfoTitle}>Build Log</Text>
+                  <Text style={styles.appInfoSubtitle}>View development changelog</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#888" />
+              </LinearGradient>
+            </BlurView>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.appInfoButton, { marginTop: 12 }]} 
+            onPress={() => Alert.alert('Report Bug', 'Bug reporting feature coming soon!\n\nFor now, please contact:\n2023_yao_junyu@fhss.edu.sg', [{ text: 'OK' }])}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={20} tint="dark" style={styles.appInfoBlur}>
+              <LinearGradient
+                colors={['rgba(255, 152, 0, 0.15)', 'rgba(255, 152, 0, 0.05)']}
+                style={styles.appInfoGradient}
+              >
+                <Ionicons name="bug" size={28} color="#FF9800" />
+                <View style={styles.appInfoButtonText}>
+                  <Text style={styles.appInfoTitle}>Report Bug</Text>
+                  <Text style={styles.appInfoSubtitle}>Help us improve Studify</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#888" />
+              </LinearGradient>
+            </BlurView>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>⚠️ Advanced</Text>
+          
+          <TouchableOpacity 
+            style={styles.resetButton} 
+            onPress={resetSettings}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['rgba(33, 150, 243, 0.3)', 'rgba(33, 150, 243, 0.2)']}
+              style={styles.resetGradient}
+            >
+              <Ionicons name="refresh-circle" size={24} color="#2196F3" />
+              <Text style={styles.buttonText}>Reset to Default</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.dangerButton} 
+            onPress={clearAllData}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['rgba(244, 67, 54, 0.4)', 'rgba(244, 67, 54, 0.3)']}
+              style={styles.dangerGradient}
+            >
+              <Ionicons name="trash" size={24} color="#f44336" />
+              <Text style={styles.buttonText}>Clear All Data</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>© 2026 Studify</Text>
+          <Text style={styles.footerText}>Made by Junyu</Text>
+        </View>
+
+        {/* App Info Modal */}
+        <Modal
+          visible={showAppInfo}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowAppInfo(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={40} tint="dark" style={styles.modalBlur}>
+              <LinearGradient
+                colors={['#1a1a2e', '#24243e', '#2d2d4a']}
+                style={styles.modalContent}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>ℹ️ About Studify</Text>
+                  <TouchableOpacity 
+                    onPress={() => setShowAppInfo(false)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="close-circle" size={32} color="#e94560" />
+                  </TouchableOpacity>
+                </View>
+
+                <ScrollView style={styles.modalBody}>
+                  <View style={styles.logoSection}>
+                    <LinearGradient
+                      colors={['rgba(233, 69, 96, 0.2)', 'rgba(233, 69, 96, 0.1)']}
+                      style={styles.logoContainer}
+                    >
+                      <Ionicons name="book" size={64} color="#e94560" />
+                    </LinearGradient>
+                    <Text style={styles.appName}>Studify</Text>
+                    <Text style={styles.appTagline}>Your Ultimate Study Companion</Text>
+                  </View>
+
+                  <BlurView intensity={15} tint="dark" style={styles.infoCard}>
+                    <LinearGradient
+                      colors={['rgba(233, 69, 96, 0.1)', 'rgba(233, 69, 96, 0.05)']}
+                      style={styles.infoGradient}
+                    >
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Version</Text>
+                        <Text style={styles.infoValue}>1.2.1</Text>
+                      </View>
+                      
+                      <View style={styles.infoDivider} />
+                      <View style={styles.infoDivider} />
+                      
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Developer</Text>
+                        <Text style={styles.infoValue}>Junyu</Text>
+                      </View>
+                      
+                      <View style={styles.infoDivider} />
+                      
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Built with</Text>
+                        <Text style={styles.infoValue}>React Native & Expo</Text>
+                      </View>
+                      
+                      <View style={styles.infoDivider} />
+                      
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Purpose</Text>
+                        <Text style={styles.infoValue}>Productive Studying</Text>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <View style={styles.featuresSection}>
+                    <Text style={styles.featuresSectionTitle}>✨ Features</Text>
+                    <BlurView intensity={15} tint="dark" style={styles.featureContainer}>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(76, 175, 80, 0.2)', 'rgba(76, 175, 80, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="timer" size={22} color="#4CAF50" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Pomodoro Timer</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(33, 150, 243, 0.2)', 'rgba(33, 150, 243, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="book" size={22} color="#2196F3" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Homework Tracker</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(255, 152, 0, 0.2)', 'rgba(255, 152, 0, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="notifications" size={22} color="#FF9800" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Smart Notifications</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(255, 215, 0, 0.2)', 'rgba(255, 215, 0, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="cash" size={22} color="#FFD700" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Coin Rewards System</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(156, 39, 176, 0.2)', 'rgba(156, 39, 176, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="paw" size={22} color="#9C27B0" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Study Companion</Text>
+                      </View>
+                    </BlurView>
+                  </View>
+
+                  <View style={styles.modalFooter}>
+                    <Text style={styles.modalFooterText}>© 2026 Studify</Text>
+                    <Text style={styles.modalFooterText}>Made by Junyu</Text>
+                  </View>
+                </ScrollView>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        </Modal>
+
+        {/* Build Log Modal */}
+        <Modal
+          visible={showBuildLog}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowBuildLog(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={40} tint="dark" style={styles.modalBlur}>
+              <LinearGradient
+                colors={['#1a1a2e', '#24243e', '#2d2d4a']}
+                style={styles.modalContent}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>🔨 Build Log</Text>
+                  <TouchableOpacity 
+                    onPress={() => setShowBuildLog(false)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="close-circle" size={32} color="#e94560" />
+                  </TouchableOpacity>
+                </View>
+
+                <ScrollView style={styles.modalBody}>
+                  <BlurView intensity={15} tint="dark" style={styles.buildLogCard}>
+                    <LinearGradient
+                      colors={['rgba(76, 175, 80, 0.15)', 'rgba(76, 175, 80, 0.05)']}
+                      style={styles.buildLogGradient}
+                    >
+                      <View style={styles.buildLogHeader}>
+                        <View style={styles.buildVersionBadge}>
+                          <Text style={styles.buildVersionText}>v1.2.1</Text>
+                        </View>
+                        <Text style={styles.buildDate}>January 12, 2026</Text>
+                      </View>
+                      <View style={styles.buildLogContent}>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Added coin info overlay with earning/usage details</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Fixed nav bar auto-hiding after permissions</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Made Pomodoro screen fully scrollable</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Added Build Log and Report Bug features</Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <BlurView intensity={15} tint="dark" style={styles.buildLogCard}>
+                    <LinearGradient
+                      colors={['rgba(156, 39, 176, 0.15)', 'rgba(156, 39, 176, 0.05)']}
+                      style={styles.buildLogGradient}
+                    >
+                      <View style={styles.buildLogHeader}>
+                        <View style={[styles.buildVersionBadge, { backgroundColor: 'rgba(156, 39, 176, 0.3)' }]}>
+                          <Text style={styles.buildVersionText}>v1.2.0</Text>
+                        </View>
+                        <Text style={styles.buildDate}>January 12, 2026</Text>
+                      </View>
+                      <View style={styles.buildLogContent}>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#9C27B0" />
+                          <Text style={styles.logText}>Added completion overlay for homework</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#9C27B0" />
+                          <Text style={styles.logText}>Implemented navigation bar hiding</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#9C27B0" />
+                          <Text style={styles.logText}>Added floating cat animation to Pomodoro</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#9C27B0" />
+                          <Text style={styles.logText}>Enhanced UI with gradients and blur effects</Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <BlurView intensity={15} tint="dark" style={styles.buildLogCard}>
+                    <LinearGradient
+                      colors={['rgba(33, 150, 243, 0.15)', 'rgba(33, 150, 243, 0.05)']}
+                      style={styles.buildLogGradient}
+                    >
+                      <View style={styles.buildLogHeader}>
+                        <View style={[styles.buildVersionBadge, { backgroundColor: 'rgba(33, 150, 243, 0.3)' }]}>
+                          <Text style={styles.buildVersionText}>v1.1.0</Text>
+                        </View>
+                        <Text style={styles.buildDate}>January 8, 2026</Text>
+                      </View>
+                      <View style={styles.buildLogContent}>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#2196F3" />
+                          <Text style={styles.logText}>Added coin rewards system</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#2196F3" />
+                          <Text style={styles.logText}>Implemented homework notifications</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#2196F3" />
+                          <Text style={styles.logText}>Added statistics tracking</Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <BlurView intensity={15} tint="dark" style={styles.buildLogCard}>
+                    <LinearGradient
+                      colors={['rgba(255, 152, 0, 0.15)', 'rgba(255, 152, 0, 0.05)']}
+                      style={styles.buildLogGradient}
+                    >
+                      <View style={styles.buildLogHeader}>
+                        <View style={[styles.buildVersionBadge, { backgroundColor: 'rgba(255, 152, 0, 0.3)' }]}>
+                          <Text style={styles.buildVersionText}>v1.0.0</Text>
+                        </View>
+                        <Text style={styles.buildDate}>January 1, 2026</Text>
+                      </View>
+                      <View style={styles.buildLogContent}>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#FF9800" />
+                          <Text style={styles.logText}>Initial release</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#FF9800" />
+                          <Text style={styles.logText}>Pomodoro timer with customizable durations</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#FF9800" />
+                          <Text style={styles.logText}>Homework tracking with priorities</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#FF9800" />
+                          <Text style={styles.logText}>Settings and customization options</Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <View style={styles.modalFooter}>
+                    <Text style={styles.modalFooterText}>Built by Junyu</Text>
+                  </View>
+                </ScrollView>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        </Modal>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
   },
   header: {
     padding: 20,
@@ -510,98 +856,158 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 5,
+    marginBottom: 12,
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  subtitleContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    overflow: 'hidden',
   },
   subtitle: {
     fontSize: 16,
-    color: '#aaa',
+    color: '#fff',
+    fontWeight: '600',
   },
   section: {
-    margin: 20,
-    padding: 20,
-    backgroundColor: '#16213e',
-    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 15,
+    marginBottom: 16,
+    letterSpacing: 0.3,
+  },
+  settingsCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 6,
+  },
+  cardGradient: {
+    padding: 20,
   },
   settingItem: {
     marginBottom: 20,
   },
-  settingLabel: {
-    fontSize: 16,
-    color: '#aaa',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#1a1a2e',
-    color: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#e94560',
-  },
-  saveButton: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  resetButton: {
-    backgroundColor: '#FF9800',
-    padding: 15,
-    borderRadius: 8,
+  settingLabelContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    gap: 8,
+  },
+  settingLabel: {
+    fontSize: 17,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(233, 69, 96, 0.3)',
+    paddingHorizontal: 16,
+  },
+  input: {
+    backgroundColor: 'transparent',
+    color: '#fff',
+    padding: 14,
+    fontSize: 18,
+    fontWeight: '600',
+    flex: 1,
+  },
+  inputUnit: {
+    color: '#aaa',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  saveButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginTop: 12,
+  },
+  saveGradient: {
+    flexDirection: 'row',
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  resetButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  resetGradient: {
+    flexDirection: 'row',
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   dangerButton: {
-    backgroundColor: '#f44336',
-    padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  dangerGradient: {
+    flexDirection: 'row',
+    padding: 16,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 14,
   },
   statCard: {
-    backgroundColor: '#1a1a2e',
-    padding: 16,
-    borderRadius: 10,
-    alignItems: 'center',
+    borderRadius: 16,
+    overflow: 'hidden',
     width: '48%',
-    borderWidth: 2,
-    borderColor: '#2a3a5e',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  statGradient: {
+    padding: 20,
+    alignItems: 'center',
   },
   highlightCard: {
-    borderColor: '#e94560',
-    backgroundColor: '#2a1a2e',
+    width: '100%',
+    elevation: 8,
   },
   statNumber: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 8,
+    marginTop: 10,
+    letterSpacing: 0.5,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#aaa',
-    marginTop: 4,
+    fontSize: 14,
+    color: '#ddd',
+    marginTop: 6,
     textAlign: 'center',
+    fontWeight: '600',
   },
   footer: {
     alignItems: 'center',
@@ -609,141 +1015,209 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   footerText: {
-    color: '#666',
+    color: '#777',
     fontSize: 14,
     marginVertical: 2,
   },
-  infoCard: {
-    backgroundColor: '#1a1a2e',
-    padding: 20,
-    borderRadius: 8,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingVertical: 12,
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: '#aaa',
-    fontWeight: '600',
-    flex: 1,
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'right',
-  },
-  infoValueSmall: {
-    fontSize: 14,
-    color: '#fff',
-    flex: 1,
-    textAlign: 'right',
-    lineHeight: 22,
-  },
-  infoDivider: {
-    height: 1,
-    backgroundColor: '#2a3a5e',
-  },
   appInfoButton: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 8,
+    borderRadius: 16,
     overflow: 'hidden',
   },
-  appInfoButtonContent: {
+  appInfoBlur: {
+    overflow: 'hidden',
+    borderRadius: 16,
+  },
+  appInfoGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 18,
   },
   appInfoButtonText: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 14,
   },
   appInfoTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 4,
+    letterSpacing: 0.3,
   },
   appInfoSubtitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#aaa',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    justifyContent: 'flex-end',
+  },
+  modalBlur: {
+    flex: 1,
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1a1a2e',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     maxHeight: '90%',
+    overflow: 'hidden',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#16213e',
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#fff',
+    letterSpacing: 0.5,
   },
   modalBody: {
-    padding: 20,
+    padding: 24,
   },
   logoSection: {
     alignItems: 'center',
     marginBottom: 30,
   },
+  logoContainer: {
+    padding: 24,
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
   appName: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 15,
+    marginTop: 16,
+    letterSpacing: 0.5,
   },
   appTagline: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#aaa',
     marginTop: 8,
     textAlign: 'center',
   },
-  featuresSection: {
-    marginTop: 20,
+  infoCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 20,
+    elevation: 4,
+  },
+  infoGradient: {
     padding: 20,
-    backgroundColor: '#16213e',
-    borderRadius: 8,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  infoLabel: {
+    fontSize: 17,
+    color: '#bbb',
+    fontWeight: '600',
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 17,
+    color: '#fff',
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'right',
+    letterSpacing: 0.3,
+  },
+  infoDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  featuresSection: {
+    marginTop: 8,
   },
   featuresSectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 15,
+    marginBottom: 16,
+    letterSpacing: 0.3,
+  },
+  featureContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    padding: 16,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
+  },
+  featureIconContainer: {
+    padding: 10,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   featureText: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#fff',
-    marginLeft: 12,
+    marginLeft: 14,
+    fontWeight: '600',
   },
   modalFooter: {
     alignItems: 'center',
     paddingVertical: 30,
   },
   modalFooterText: {
-    color: '#666',
+    color: '#777',
     fontSize: 14,
     marginVertical: 2,
+  },
+  buildLogCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+    elevation: 4,
+  },
+  buildLogGradient: {
+    padding: 18,
+  },
+  buildLogHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  buildVersionBadge: {
+    backgroundColor: 'rgba(76, 175, 80, 0.3)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  buildVersionText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  buildDate: {
+    color: '#aaa',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  buildLogContent: {
+    gap: 12,
+  },
+  logItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  logText: {
+    color: '#fff',
+    fontSize: 15,
+    flex: 1,
+    lineHeight: 22,
   },
 });
