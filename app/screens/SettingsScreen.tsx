@@ -672,6 +672,33 @@ export default function SettingsScreen() {
                         </LinearGradient>
                         <Text style={styles.featureText}>Study Companion</Text>
                       </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(233, 69, 96, 0.2)', 'rgba(233, 69, 96, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="sparkles" size={22} color="#e94560" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>AI Study Assistant</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(138, 35, 135, 0.2)', 'rgba(138, 35, 135, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="calendar" size={22} color="#8A2387" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Study Planner</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <LinearGradient
+                          colors={['rgba(76, 175, 80, 0.2)', 'rgba(76, 175, 80, 0.1)']}
+                          style={styles.featureIconContainer}
+                        >
+                          <Ionicons name="people" size={22} color="#4CAF50" />
+                        </LinearGradient>
+                        <Text style={styles.featureText}>Study Rooms</Text>
+                      </View>
                     </BlurView>
                   </View>
 
@@ -718,9 +745,34 @@ export default function SettingsScreen() {
                         <View style={styles.buildVersionBadge}>
                           <Text style={styles.buildVersionText}>v1.2.1</Text>
                         </View>
-                        <Text style={styles.buildDate}>January 12, 2026</Text>
+                        <Text style={styles.buildDate}>January 13, 2026</Text>
                       </View>
                       <View style={styles.buildLogContent}>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Added Study Rooms with real-time Firebase sync</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Study/Break/Pause controls with status indicators</Text>
+                        
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Room sharing with 6-digit codes for cross-device joining</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Real-time member tracking and study time sync</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Added AI Study Assistant</Text>
+                        </View>
+                        <View style={styles.logItem}>
+                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                          <Text style={styles.logText}>Added Study Planner with calendar view</Text>
+                        </View>
                         <View style={styles.logItem}>
                           <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
                           <Text style={styles.logText}>Added coin info overlay with earning/usage details</Text>
@@ -732,10 +784,6 @@ export default function SettingsScreen() {
                         <View style={styles.logItem}>
                           <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
                           <Text style={styles.logText}>Made Pomodoro screen fully scrollable</Text>
-                        </View>
-                        <View style={styles.logItem}>
-                          <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
-                          <Text style={styles.logText}>Added Build Log and Report Bug features</Text>
                         </View>
                       </View>
                     </LinearGradient>

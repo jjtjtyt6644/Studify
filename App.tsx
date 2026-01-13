@@ -16,6 +16,9 @@ import HomeworkScreen from './app/screens/HomeworkScreen';
 import StoreScreen from './app/screens/StoreScreen';
 import SettingsScreen from './app/screens/SettingsScreen';
 import WelcomeScreen from './app/screens/WelcomeScreen';
+import AiAssistantScreen from './app/screens/AiAssistantScreen';
+import PlannerScreen from './app/screens/PlannerScreen';
+import StudyRoomScreen from './app/screens/StudyRoomScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -101,9 +104,13 @@ export default function App() {
                 iconName = focused ? 'timer' : 'timer-outline';
               } else if (route.name === 'Homework') {
                 iconName = focused ? 'book' : 'book-outline';
-            } else if (route.name === 'Store') {
-              iconName = focused ? 'storefront' : 'storefront-outline';
-              } else if (route.name === 'Settings') {
+            } else if (route.name === 'Planner') {
+              iconName = focused ? 'calendar' : 'calendar-outline';
+            } else if (route.name === 'AI Assistant') {
+              iconName = focused ? 'sparkles' : 'sparkles-outline';
+            } else if (route.name === 'Study Room') {
+              iconName = focused ? 'people' : 'people-outline';
+            } else if (route.name === 'Settings') {
                 iconName = focused ? 'settings' : 'settings-outline';
               }
 
@@ -126,7 +133,9 @@ export default function App() {
         >
           <Tab.Screen name="Pomodoro" component={PomodoroScreen} />
           <Tab.Screen name="Homework" component={HomeworkScreen} />
-          <Tab.Screen name="Store" component={StoreScreen} />
+          <Tab.Screen name="Planner" component={PlannerScreen} />
+          <Tab.Screen name="AI Assistant" component={AiAssistantScreen} />
+          <Tab.Screen name="Study Room" component={StudyRoomScreen} />
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
       </NavigationContainer>

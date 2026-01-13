@@ -124,7 +124,7 @@ export default function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
               Built to help students achieve their goals
             </Text>
             <View style={styles.versionContainer}>
-              <Text style={styles.versionText}>Version 1.2.0</Text>
+              <Text style={styles.versionText}>Version 1.2.1</Text>
             </View>
           </LinearGradient>
         </BlurView>
