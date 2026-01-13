@@ -3,7 +3,7 @@ import { getDatabase } from 'firebase/database';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY || "AIzaSyB417TX9ADoSrkN-RQMwlNTGgtpzzmCj5k",
+  apiKey: process.env.FIREBASE_API_KEY || "",
   authDomain: "studify-168c9.firebaseapp.com",
   databaseURL: "https://studify-168c9-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "studify-168c9",
