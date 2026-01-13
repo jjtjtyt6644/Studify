@@ -24,6 +24,7 @@ export default function SettingsScreen() {
   const [completedSessions, setCompletedSessions] = useState(0);
   const [showAppInfo, setShowAppInfo] = useState(false);
   const [showBuildLog, setShowBuildLog] = useState(false);
+  const [showLicense, setShowLicense] = useState(false);
   
   // Statistics
   const [totalStudyTime, setTotalStudyTime] = useState(0); // in minutes
@@ -499,6 +500,26 @@ export default function SettingsScreen() {
 
           <TouchableOpacity 
             style={[styles.appInfoButton, { marginTop: 12 }]} 
+            onPress={() => setShowLicense(true)}
+            activeOpacity={0.7}
+          >
+            <BlurView intensity={20} tint="dark" style={styles.appInfoBlur}>
+              <LinearGradient
+                colors={['rgba(76, 175, 80, 0.15)', 'rgba(76, 175, 80, 0.05)']}
+                style={styles.appInfoGradient}
+              >
+                <Ionicons name="document-text" size={28} color="#4CAF50" />
+                <View style={styles.appInfoButtonText}>
+                  <Text style={styles.appInfoTitle}>License</Text>
+                  <Text style={styles.appInfoSubtitle}>MIT License - Open Source</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#888" />
+              </LinearGradient>
+            </BlurView>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.appInfoButton, { marginTop: 12 }]} 
             onPress={() => Alert.alert('Report Bug', 'Bug reporting feature coming soon!\n\nFor now, please contact:\n2023_yao_junyu@fhss.edu.sg', [{ text: 'OK' }])}
             activeOpacity={0.7}
           >
@@ -889,6 +910,80 @@ export default function SettingsScreen() {
             </BlurView>
           </View>
         </Modal>
+
+        {/* License Modal */}
+        <Modal
+          visible={showLicense}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowLicense(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={40} tint="dark" style={styles.modalBlur}>
+              <LinearGradient
+                colors={['#1a1a2e', '#24243e', '#2d2d4a']}
+                style={styles.modalContent}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>📜 MIT License</Text>
+                  <TouchableOpacity 
+                    onPress={() => setShowLicense(false)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="close-circle" size={32} color="#e94560" />
+                  </TouchableOpacity>
+                </View>
+
+                <ScrollView style={styles.modalBody}>
+                  <BlurView intensity={15} tint="dark" style={styles.licenseCard}>
+                    <LinearGradient
+                      colors={['rgba(76, 175, 80, 0.15)', 'rgba(76, 175, 80, 0.05)']}
+                      style={styles.licenseGradient}
+                    >
+                      <Text style={styles.licenseTitle}>MIT License</Text>
+                      <Text style={styles.licenseCopyright}>Copyright (c) 2026 Junyu</Text>
+                      
+                      <Text style={styles.licenseText}>
+                        Permission is hereby granted, free of charge, to any person obtaining a copy
+                        of this software and associated documentation files (the "Software"), to deal
+                        in the Software without restriction, including without limitation the rights
+                        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                        copies of the Software, and to permit persons to whom the Software is
+                        furnished to do so, subject to the following conditions:
+                      </Text>
+
+                      <Text style={styles.licenseText}>
+                        The above copyright notice and this permission notice shall be included in all
+                        copies or substantial portions of the Software.
+                      </Text>
+
+                      <Text style={styles.licenseText}>
+                        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                        SOFTWARE.
+                      </Text>
+
+                      <View style={styles.licenseNote}>
+                        <Ionicons name="heart" size={20} color="#4CAF50" />
+                        <Text style={styles.licenseNoteText}>
+                          This app is open source and free to use, modify, and distribute!
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </BlurView>
+
+                  <View style={styles.modalFooter}>
+                    <Text style={styles.modalFooterText}>© 2026 Studify - Open Source</Text>
+                  </View>
+                </ScrollView>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        </Modal>
       </ScrollView>
     </LinearGradient>
   );
@@ -1221,6 +1316,48 @@ const styles = StyleSheet.create({
     color: '#777',
     fontSize: 14,
     marginVertical: 2,
+  },
+  licenseCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+    elevation: 4,
+  },
+  licenseGradient: {
+    padding: 20,
+  },
+  licenseTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginBottom: 8,
+  },
+  licenseCopyright: {
+    fontSize: 16,
+    color: '#aaa',
+    marginBottom: 20,
+  },
+  licenseText: {
+    fontSize: 14,
+    color: '#ccc',
+    lineHeight: 22,
+    marginBottom: 16,
+    textAlign: 'justify',
+  },
+  licenseNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+    padding: 14,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  licenseNoteText: {
+    color: '#4CAF50',
+    fontSize: 14,
+    flex: 1,
+    fontWeight: '600',
   },
   buildLogCard: {
     borderRadius: 16,
